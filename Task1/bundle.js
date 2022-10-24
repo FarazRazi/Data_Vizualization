@@ -1,13 +1,14 @@
 import students from "./students.json" assert { type: "json" };
 
-console.log("Students Added", students);
+// console.log("Students Added", students);
+// console.log("Script Started");
 
-console.log("Script Started");
 // set the dimensions and margins of the graph
 var margin = { top: 10, right: 30, bottom: 90, left: 40 },
   width = 720 - margin.left - margin.right,
   height = 480 - margin.top - margin.bottom;
 // console.log("Margin: ", margin);
+
 // append the svg object to the body of the page
 var svg = d3
   .select("#barChart")
@@ -16,6 +17,7 @@ var svg = d3
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 // Parse the Data
 // X axis
 var x = d3
@@ -23,6 +25,7 @@ var x = d3
   .range([0, width])
   .domain(
     students
+      // sort by creation date
       .sort((a, b) =>
         a.create_time > b.create_time
           ? 1
@@ -107,7 +110,10 @@ var mouseover = function (d) {
         data.gpa +
         "<br>" +
         "Interest: " +
-        data.interests.map((item) => " " + item)
+        data.interests.map((item) => " " + item) +
+        "<br>" +
+        "Created On: " +
+        data.create_time
     )
     .style("opacity", 1);
 };
@@ -147,7 +153,7 @@ const mouseleave = function (event, d) {
 };
 
 // Bars
-var bar = svg
+svg
   .selectAll("mybar")
   .data(students)
   .enter()
