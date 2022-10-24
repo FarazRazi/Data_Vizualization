@@ -1,0 +1,37 @@
+.bar1 {
+  fill: aqua;
+}
+.bar2 {
+  fill: deepskyblue;
+}
+.bar3 {
+  fill: steelblue;
+}
+.bar:hover {
+  fill: orange;
+}
+.line {
+  fill: none;
+  stroke: royalblue;
+  stroke-width: 3;
+}
+.dot {
+  fill: royalblue;
+  stroke: royalblue;
+  opacity: 0.9;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+}
+
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
