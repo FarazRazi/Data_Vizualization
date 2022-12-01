@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #1e1e1e;
+  background-color: white;
   box-sizing: border-box;
   font-family: monospace;
   font-size: 15px;
@@ -10,7 +10,6 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 50px 1fr 50px;
-
   grid-template-areas:
     "header"
     "main"
@@ -20,16 +19,21 @@ body {
 
 .header {
   grid-area: header;
-  background-color: #1e1e1e;
+  background-color: whitesmoke;
 }
 
 .main {
   grid-area: main;
-  background-color: #1e1e1e;
+  background-color: white;
 }
 
 /* flexing header and footer*/
-.header,
+.header {
+  align-items: center;
+  justify-content: space-between;
+  color: darkblue;
+  padding: 10px;
+}
 .footer {
   display: flex;
   align-items: center;
@@ -116,7 +120,40 @@ body {
     grid-gap: 10px;
   }
 }
+.bar1 {
+  fill: aqua;
+}
+.bar2 {
+  fill: deepskyblue;
+}
+.bar3 {
+  fill: steelblue;
+}
+.bar:hover {
+  fill: orange;
+}
+.line {
+  fill: none;
+  stroke: royalblue;
+  stroke-width: 3;
+}
+.dot {
+  fill: royalblue;
+  stroke: royalblue;
+  opacity: 0.9;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+}
 
-.header_search {
-  margin: 24px;
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
 }
