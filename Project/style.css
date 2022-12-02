@@ -139,8 +139,14 @@ body {
 }
 .dot {
   fill: royalblue;
-  stroke: royalblue;
+  /* stroke: royalblue; */
   opacity: 0.9;
+}
+.dot:hover {
+  fill: orange;
+}
+.selected {
+  fill: orange;
 }
 table {
   font-family: arial, sans-serif;
