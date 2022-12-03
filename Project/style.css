@@ -138,13 +138,13 @@ body {
   stroke-width: 3;
 }
 .dot {
-  fill: royalblue;
+  /* fill: royalblue; */
   /* stroke: royalblue; */
   opacity: 0.9;
 }
-.dot:hover {
+/* .dot:hover {
   fill: orange;
-}
+} */
 .selected {
   fill: orange;
 }

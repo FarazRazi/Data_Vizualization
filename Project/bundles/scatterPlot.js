@@ -1,3 +1,4 @@
+import { colorRanges } from "./constants.js";
 export const scatterPlot = (data, widthProp, heightProp, groupBy) => {
   d3.select(".barChart > *").remove();
   var margin = { top: 40, right: 30, bottom: 40, left: 40 },
@@ -20,7 +21,7 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy) => {
         const date = new Date(
           0,
           d["Flight Date"].split("-").slice(1, 2).join("-"),
-          1
+          15
         );
         // console.log(date);
         return date;
@@ -67,7 +68,7 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy) => {
   var x = d3
     .scaleTime()
     .domain([new Date(0, 0, 1), new Date(1, 0, 0)])
-    .range([0, width]);
+    .range([22, width]);
 
   svg
     .append("g")
@@ -97,21 +98,22 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy) => {
   //     .attr("stroke", "black");
 
   // Add Y axis
-  // console.log(d3.max(bar_chart_data.map((d) => d.sum)));
+  console.log(d3.max(bar_chart_data.map((d) => d.sum)));
+  console.log(d3.min(bar_chart_data.map((d) => d.sum)));
   var y = d3
-    .scalePow()
-    .exponent(0.1)
+    .scaleLog()
     .domain([
-      d3.min(bar_chart_data.map((d) => d.sum)) - 0.2,
+      d3.min(bar_chart_data.map((d) => d.sum)),
       d3.max(bar_chart_data.map((d) => d.sum)),
     ])
-    .range([height, 0]);
+    .range([height - 10, 0]);
+  // console.log(y(10));
   svg.append("g").call(d3.axisLeft(y)).attr("marker-end", "url(#arrow)");
-  var clrRange = ["red", "blue", "green", "yellow"];
+
   var colScale = d3
     .scaleOrdinal()
     .domain(bar_chart_data.map((d) => d.key))
-    .range(clrRange);
+    .range(colorRanges);
   // console.log(colScale);
   var tooltip = d3
     .select("#barChart")
@@ -171,75 +173,6 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy) => {
   //   .on("mousemove", mousemove)
   //   .on("mouseleave", mouseleave);
 
-  var g = svg.selectAll("mybar").data(bar_chart_data).enter().append("g");
-  // .selectAll("circle");
-  // .data((d) => {
-  //   var keys = [...species.keys()];
-  //   // let array = [{}];
-  //   // d.forEach((s) => {
-  //   //   const species = s.species;
-  //   //   species.forEach((s) => {
-  //   //     array.push(s);
-  //   //   });
-  //   // });
-  //   var totals = d3
-  //     .nest()
-  //     .rollup((v) => {
-  //       var array = [];
-  //       // var result = {
-  //       //   date: v.date,
-  //       //   // sum: v.sum,
-  //       // };
-  //       // console.log(v);
-  //       Array.from(v.species, ([key, values]) => {
-  //         array.push({
-  //           date: v.date,
-  //           key: key,
-  //           sum: values.length,
-  //           values: values,
-  //         });
-  //       });
-  //       // keys.forEach((key) => {
-  //       // console.log(v.species.get(key));
-  //       // result.arr.push();
-  //       // });
-  //       // console.log(array);
-  //       return array;
-  //     })
-  //     .entries(d);
-  //   // console.log(totals);
-  //   return totals;
-  // })
-  // .enter();
-  //   dots on chart
-  g.append("circle") // Uses the enter().append() method
-    .attr("class", "dot") // Assign a class for styling
-    .attr("cx", function (d) {
-      // console.log(d.date);
-      return x(new Date(d.date)) - x(new Date(0, 1, 0));
-    })
-    .attr("cy", function (d) {
-      return y(0);
-    })
-    .attr("r", 0.1)
-    .attr("fill", (d) => colScale(d.key))
-    .on("mouseover", mouseover)
-    .on("mousemove", mousemove)
-    .on("mouseleave", mouseleave);
-
-  svg
-    .selectAll("circle")
-    .transition()
-    .duration(800)
-    .attr("cy", function (d) {
-      // console.log(d.species);
-      return y(d.sum);
-    })
-    .attr("r", 5);
-  // .delay(function (d, i) {
-  //   return i * 10;
-  // });
-
   // svg
   //   .selectAll("rect")
   //   .transition()
@@ -253,4 +186,35 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy) => {
   //   .delay(function (d, i) {
   //     return i * 10;
   //   });
+  const drawPlot = () => {
+    var g = svg.selectAll("mybar").data(bar_chart_data).enter().append("g");
+    g.append("circle") // Uses the enter().append() method
+      .attr("class", "dot") // Assign a class for styling
+      .attr("cx", function (d) {
+        // console.log(d.date);
+        return x(new Date(d.date)) - x(new Date(0, 1, 0));
+      })
+      .attr("cy", function (d) {
+        return height;
+      })
+      .attr("r", 5)
+      .attr("fill", (d) => colScale(d.key))
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave);
+
+    svg
+      .selectAll("circle")
+      .transition()
+      .duration(800)
+      .attr("cy", function (d) {
+        // console.log(y(d.sum));
+        return y(d.sum);
+      })
+      .attr("r", 5)
+      .delay(function (d, i) {
+        return i * 1;
+      });
+  };
+  drawPlot(); // Draws scatterplot)
 };
