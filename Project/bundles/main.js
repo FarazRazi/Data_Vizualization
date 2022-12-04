@@ -2,14 +2,24 @@
 import { scatterPlot } from "./scatterPlot.js";
 d3.csv("./birdstrikes.csv").then((_data) => {
   let groupBy = "Time of day";
-  scatterPlot(_data, 680, 360, groupBy, "months");
-  function setGroupBy(e) {
-    // console.log(e.srcElement.id);
-    groupBy = e.srcElement.id;
-    scatterPlot(_data, 680, 360, groupBy, "months");
+  // scatterPlot(_data, 680, 360, groupBy, "months");
+
+  let options = document.querySelectorAll(".setGroupBtn");
+  let i;
+  function unselectAll() {
+    for (i = 0; i < options.length; i++) {
+      options[i].style.boxShadow =
+        " transparent 0 0 0 3px, rgba(18, 18, 18, 0.1) 0 6px 20px";
+    }
   }
-  let grpbtn = document.getElementsByClassName("setGroupBtn");
-  Array.from(grpbtn).forEach(function (element) {
-    element.addEventListener("click", setGroupBy);
+
+  options.forEach((option) => {
+    option.addEventListener("click", setGroupBy);
   });
+  function setGroupBy(e) {
+    unselectAll();
+    this.style.boxShadow = "tomato 0 0 0 3px";
+    groupBy = e.srcElement.id;
+    scatterPlot(_data, 560, 360, groupBy, "months");
+  }
 });

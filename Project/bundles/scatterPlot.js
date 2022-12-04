@@ -1,7 +1,8 @@
 import { colorRanges } from "./constants.js";
+import { bubblePlotLabels, getColorScale, getSizeScale } from "./utils.js";
 export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
   d3.select("#barChart").selectAll("*").remove();
-  var margin = { top: 40, right: 30, bottom: 40, left: 40 },
+  var margin = { top: 40, right: 10, bottom: 40, left: 30 },
     width = widthProp - margin.left - margin.right,
     height = heightProp - margin.top - margin.bottom;
   var svg = d3
@@ -11,7 +12,7 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  console.log(time, groupBy);
+  // console.log(time, groupBy);
   //   Parse the Data
   var nested_data = d3
     .nest()
@@ -60,8 +61,12 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
       });
     });
   });
-  console.log(bar_chart_data);
+  // console.log(bar_chart_data);
+  const maxSum = d3.max(bar_chart_data.map((d) => d.sum));
+  const minSum = d3.min(bar_chart_data.map((d) => d.sum));
 
+  const allKeys = new Set();
+  bar_chart_data.forEach((d) => allKeys.add(d.key));
   //   X axis
   var x = d3
     .scaleTime()
@@ -77,26 +82,14 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
     );
 
   // Add Y axis
-  var y = d3
-    .scaleLog()
-    .domain([
-      d3.min(bar_chart_data.map((d) => d.sum)),
-      d3.max(bar_chart_data.map((d) => d.sum)),
-    ])
-    .range([height, 0]);
+  var y = d3.scaleLog().domain([minSum, maxSum]).range([height, 0]);
   svg.append("g").call(d3.axisLeft(y)).attr("marker-end", "url(#arrow)");
-  var z = d3
-    .scaleLinear()
-    .domain([
-      d3.min(bar_chart_data.map((d) => d.sum)),
-      d3.max(bar_chart_data.map((d) => d.sum)),
-    ])
-    .range([4, 40]);
-  var colScale = d3
-    .scaleOrdinal()
-    .domain(bar_chart_data.map((d) => d.key))
-    .range(colorRanges);
-  var tooltip = d3
+  // Add Z axis for bubble size
+
+  var z = getSizeScale([minSum, maxSum]);
+  // Add color Scale
+  var colScale = getColorScale(allKeys);
+  const tooltip = d3
     .select("#barChart")
     .append("div")
     .style("opacity", 0)
@@ -112,11 +105,8 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
     tooltip
       .html("Strikes: " + d.sum + "<br>" + groupBy + ": " + d.key + "<br>")
       .style("opacity", 1);
-    d3.selectAll("circle").each(function (dAll) {
-      if (d.key === dAll.key) {
-        d3.select(this).attr("r", (d) => z(d.sum) + 5);
-      }
-    });
+    d3.selectAll(".dot").style("opacity", 0.1);
+    d3.selectAll("." + d.key.replace(" ", ".")).style("opacity", 1);
   };
   const mousemove = function (event, d) {
     tooltip
@@ -125,17 +115,15 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
       .style("top", event.y + 60 + "px");
   };
   const mouseleave = function (event, d) {
-    d3.selectAll("circle").each(function (dAll) {
-      if (d.key === dAll.key) {
-        d3.select(this).attr("r", (d) => z(d.sum));
-        tooltip.style("opacity", 0);
-      }
-    });
+    d3.selectAll(".dot").style("opacity", 1);
+    tooltip.style("opacity", 0);
   };
   const drawPlot = () => {
     var g = svg.selectAll("mybar").data(bar_chart_data).enter().append("g");
     g.append("circle")
-      .attr("class", "dot")
+      .attr("class", function (d) {
+        return "dot " + d.key;
+      })
       .attr("cx", function (d) {
         return x(new Date(d.date)) - x(new Date(0, 1, 0));
       })
@@ -160,4 +148,12 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
       });
   };
   drawPlot();
+  bubblePlotLabels(
+    width,
+    heightProp,
+    [minSum, maxSum],
+    [4, 40],
+    [minSum, maxSum / 2, maxSum],
+    allKeys
+  );
 };

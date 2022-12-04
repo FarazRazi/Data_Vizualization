@@ -113,7 +113,7 @@ body {
     margin: 10px;
     display: grid;
     grid-template-columns: 1fr 2fr;
-    grid-template-rows: 400px 400px;
+    grid-template-rows: 500px 500px;
     grid-template-areas:
       "card1 card3"
       "card2 card4";
@@ -130,7 +130,7 @@ body {
   fill: steelblue;
 }
 .bar:hover {
-  fill: orange;
+  fill: tomato;
 }
 .line {
   fill: none;
@@ -145,20 +145,37 @@ body {
   stroke: black;
 }
 .selected {
-  fill: orange;
-}
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
+  fill: tomato;
 }
 
-td,
-th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
+.setGroupBtn {
+  align-items: center;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 0.5em;
+  box-shadow: transparent 0 0 0 3px, rgba(18, 18, 18, 0.1) 0 6px 20px;
+  box-sizing: border-box;
+  color: #121212;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 1 1 auto;
+  font-family: Inter, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  justify-content: center;
+  line-height: 1;
+  margin: 0;
+  outline: none;
+  text-align: center;
+  text-decoration: none;
+  transition: box-shadow 0.2s, -webkit-box-shadow 0.2s;
+  white-space: nowrap;
+  border: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
-tr:nth-child(even) {
-  background-color: #dddddd;
+.setGroupBtn:hover {
+  box-shadow: tomato 0 0 0 3px, transparent 0 0 0 0;
 }
