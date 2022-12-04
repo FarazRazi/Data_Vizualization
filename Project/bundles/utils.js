@@ -6,6 +6,11 @@ export const getColorScale = (allKeys) =>
 export const getSizeScale = (domain) =>
   d3.scaleLinear().domain(domain).range([4, 40]);
 
+export const camalize = (str) => {
+  return str
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+};
 export const bubblePlotLabels = (
   widthProp,
   heightProp,
@@ -14,8 +19,8 @@ export const bubblePlotLabels = (
   valuesToShow,
   allgroups
 ) => {
-  var height = heightProp;
-  var width = 260;
+  var height = heightProp - 100;
+  var width = 220;
   var svg = d3
     .select("#barChart")
     .append("svg")
@@ -94,9 +99,9 @@ export const bubblePlotLabels = (
     .attr("alignment-baseline", "middle");
 
   var highlight = function (e, d) {
-    console.log(d.replace(" ", "."));
+    console.log(d);
     d3.selectAll(".dot").style("opacity", 0.1);
-    d3.selectAll("." + d.replace(" ", ".")).style("opacity", 1);
+    d3.selectAll("." + camalize(d)).style("opacity", 1);
   };
   var noHighlight = function (d) {
     d3.selectAll(".dot").style("opacity", 1);
@@ -111,7 +116,7 @@ export const bubblePlotLabels = (
     .enter()
     .append("circle")
     .attr("class", function (d) {
-      return "dot " + d;
+      return "dot " + camalize(d);
     })
     .attr("cx", xKeys)
     .attr("cy", function (d, i) {

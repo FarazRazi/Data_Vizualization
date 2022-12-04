@@ -1,6 +1,11 @@
 import { colorRanges } from "./constants.js";
-import { bubblePlotLabels, getColorScale, getSizeScale } from "./utils.js";
-export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
+import {
+  bubblePlotLabels,
+  camalize,
+  getColorScale,
+  getSizeScale,
+} from "./utils.js";
+export const scatterPlot = (data, widthProp, heightProp, groupBy) => {
   d3.select("#barChart").selectAll("*").remove();
   var margin = { top: 40, right: 10, bottom: 40, left: 30 },
     width = widthProp - margin.left - margin.right,
@@ -13,45 +18,9 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   // console.log(time, groupBy);
-  //   Parse the Data
-  var nested_data = d3
-    .nest()
-    .key(function (d) {
-      if (time === "months") {
-        const date = new Date(
-          0,
-          d["Flight Date"].split("-").slice(1, 2).join("-"),
-          15
-        );
-        // console.log(date);
-        return date;
-      } else if (time === "years") {
-        const date = new Date(
-          d["Flight Date"].split("-").slice(0, 1).join("-"),
-          d["Flight Date"].split("-").slice(1, 2).join("-"),
-          1
-        );
-        // console.log(date);
-        return date;
-      }
-    })
-    .sortKeys(d3.ascending)
-    .rollup(function (leaves) {
-      return {
-        sum: d3.sum(leaves, function (d) {
-          return 1;
-        }),
-        // state: d3.group(leaves, (d) => {
-        //   return d["Origin State"];
-        // }),
-        grouped: d3.group(leaves, (d) => {
-          return d[groupBy];
-        }),
-      };
-    })
-    .entries(data);
+
   var bar_chart_data = [];
-  nested_data.forEach(function (d) {
+  data.forEach(function (d) {
     Array.from(d.value.grouped, ([key, values]) => {
       bar_chart_data.push({
         date: d.key,
@@ -106,7 +75,7 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
       .html("Strikes: " + d.sum + "<br>" + groupBy + ": " + d.key + "<br>")
       .style("opacity", 1);
     d3.selectAll(".dot").style("opacity", 0.1);
-    d3.selectAll("." + d.key.replace(" ", ".")).style("opacity", 1);
+    d3.selectAll("." + camalize(d.key)).style("opacity", 1);
   };
   const mousemove = function (event, d) {
     tooltip
@@ -122,7 +91,7 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
     var g = svg.selectAll("mybar").data(bar_chart_data).enter().append("g");
     g.append("circle")
       .attr("class", function (d) {
-        return "dot " + d.key;
+        return "dot " + camalize(d.key);
       })
       .attr("cx", function (d) {
         return x(new Date(d.date)) - x(new Date(0, 1, 0));
