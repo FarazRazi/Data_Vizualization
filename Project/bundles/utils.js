@@ -11,32 +11,21 @@ export const camalize = (str) => {
     .toLowerCase()
     .replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
 };
-export const bubblePlotLabels = (
-  widthProp,
-  heightProp,
-  domain,
-  range,
-  valuesToShow,
-  allgroups
-) => {
-  var height = heightProp - 100;
-  var width = 220;
-  var svg = d3
-    .select("#barChart")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+export const sizeLabels = (chartId, domain, valuesToShow) => {
+  d3.select("#" + chartId)
+    .selectAll("*")
+    .remove();
 
-  // The scale you use for bubble size
-  var size = getSizeScale(domain); // Size in pixel
-  //   console.log(size(valuesToShow[2]));
-  var xKeys = width * 0.2;
-  var yKeys = height * 0.4;
+  var svg = d3.select("#" + chartId).append("svg");
+  var width = 300;
+  var height = 300;
   var xCircle = width * 0.5;
   var xLabel = width * 0.8;
-  var yCircle = height * 0.8;
+  var yCircle = height * 0.3;
   // Add legend: circles
   var valuesToShow = valuesToShow;
+  var size = getSizeScale(domain); // Size in pixel
+
   svg
     .selectAll("legend")
     .data(valuesToShow)
@@ -82,7 +71,7 @@ export const bubblePlotLabels = (
       return yCircle - size(d);
     })
     .text(function (d) {
-      return d;
+      return d + " $";
     })
     .style("font-size", 10)
     .attr("alignment-baseline", "middle");
@@ -92,14 +81,34 @@ export const bubblePlotLabels = (
     .data(valuesToShow)
     .enter()
     .append("text")
-    .attr("x", xCircle - 45)
-    .attr("y", yCircle + 10)
-    .text("Bubble size Chart")
+    .attr("x", xCircle - 90)
+    .attr("y", yCircle + 20)
+    .text("Total strike costs = others + repair ")
     .style("font-size", 10)
     .attr("alignment-baseline", "middle");
+};
+export const bubblePlotLabels = (
+  chartId,
+  widthProp,
+  heightProp,
+  domain,
+  allgroups
+) => {
+  var height = heightProp - 100;
+  var width = 220;
+  d3.select("#" + chartId)
+    .selectAll("*")
+    .remove();
+  var svg = d3
+    .select("#" + chartId)
+    .append("svg")
+    .attr("height", 600);
+  // The scale you use for bubble size
+  var size = getSizeScale(domain); // Size in pixel
+  //   console.log(size(valuesToShow[2]));
+  var xKeys = width * 0.1;
 
   var highlight = function (e, d) {
-    console.log(d);
     d3.selectAll(".dot").style("opacity", 0.1);
     d3.selectAll("." + camalize(d)).style("opacity", 1);
   };
@@ -118,11 +127,13 @@ export const bubblePlotLabels = (
     .attr("class", function (d) {
       return "dot " + camalize(d);
     })
-    .attr("cx", xKeys)
+    .attr("cx", function (d, i) {
+      return xKeys * (i % 2 ? 1 : 10);
+    })
     .attr("cy", function (d, i) {
-      return 10 + i * (size + 5);
+      return ((i + 1) % 2 ? i + 1 : i) * size * 0.5;
     }) // 100 is where the first dot appears. 25 is the distance between dots
-    .attr("r", 4)
+    .attr("r", 5)
     .style("fill", function (d) {
       return myColor(d);
     })
@@ -135,10 +146,12 @@ export const bubblePlotLabels = (
     .data(allgroups)
     .enter()
     .append("text")
-    .attr("x", xKeys * 1.2)
+    .attr("x", function (d, i) {
+      return xKeys * (i % 2 ? 1.7 : 10.7);
+    })
     .attr("y", function (d, i) {
-      return i * (size + 5) + size / 2;
-    }) // 100 is where the first dot appears. 25 is the distance between dots
+      return ((i + 1) % 2 ? i + 1 : i) * size * 0.5;
+    })
     .style("fill", function (d) {
       return myColor(d);
     })
@@ -147,6 +160,7 @@ export const bubblePlotLabels = (
     })
     .attr("text-anchor", "left")
     .style("alignment-baseline", "middle")
+    .style("font-size", "12")
     .on("mouseover", highlight)
     .on("mouseleave", noHighlight);
 };

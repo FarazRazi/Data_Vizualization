@@ -112,8 +112,8 @@ body {
   .main_cards {
     margin: 10px;
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    grid-template-rows: 500px 500px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 500px 800px;
     grid-template-areas:
       "card1 card3"
       "card2 card4";
@@ -134,14 +134,13 @@ body {
 }
 .line {
   fill: none;
-  stroke: royalblue;
   stroke-width: 3;
 }
 .dot {
   stroke-width: 2px;
-  stroke: white;
 }
 .dot:hover {
+  stroke-width: 4px;
   stroke: black;
 }
 .selected {
@@ -152,7 +151,7 @@ body {
   align-items: center;
   background-color: #fff;
   border-radius: 12px;
-  padding: 0.5em;
+  padding: 0.5rem;
   box-shadow: transparent 0 0 0 3px, rgba(18, 18, 18, 0.1) 0 6px 20px;
   box-sizing: border-box;
   color: #121212;
@@ -164,7 +163,7 @@ body {
   font-weight: 700;
   justify-content: center;
   line-height: 1;
-  margin: 0;
+  margin: 0.5rem;
   outline: none;
   text-align: center;
   text-decoration: none;

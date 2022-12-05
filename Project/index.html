@@ -9,15 +9,11 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <title>Document</title>
   </head>
-  <header class="header">
-    <div class="card">Search...</div>
-  </header>
   <body>
     <main class="main">
       <div class="main_cards">
-        <div class="card">Time line</div>
-        <div class="card">Over Time period</div>
         <div class="card">
+          Strikes Frequency
           <div>
             Select a grouping filter:<br /><br />
             <button class="setGroupBtn" id="Time of day">Time of day</button>
@@ -32,7 +28,20 @@
           </div>
           <div id="barChart"></div>
         </div>
-        <div class="card">Hierarchy Visualization</div>
+        <div class="card">
+          Hierarchy Visualization
+          <div id="treeChart"></div>
+        </div>
+        <div class="card">
+          Size Chart
+          <div id="sizeLabels"></div>
+          Filtered Groups
+          <div id="labels"></div>
+        </div>
+        <div class="card">
+          Over Time period
+          <div id="timeSlider"></div>
+        </div>
       </div>
       <div class="main_cards"></div>
     </main>
