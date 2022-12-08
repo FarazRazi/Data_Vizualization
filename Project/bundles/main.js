@@ -1,17 +1,20 @@
 // import _data from "./birdstrikes.json" assert { type: "json" };
+import { barPlot } from "./barPlot.js";
 import { treeChart } from "./hierarchy.js";
+import { radialPlot } from "./radialPlot.js";
 import { scatterPlot } from "./scatterPlot.js";
 import { bubblePlotLabels, camalize, sizeLabels } from "./utils.js";
 var groupBy = "Time of day";
 
 export const highlight = function (e, d) {
-  document.getElementById("Origin State").click();
+  // document.getElementById("Origin State").click();
+
   d3.selectAll(".dot").style("opacity", 0.1);
   d3.selectAll("." + camalize(d.data[0])).style("opacity", 1);
   e.stopPropagation();
 };
 export const noHighlight = function (d) {
-  console.log("no highlight");
+  // console.log("no highlight");
   d3.selectAll(".dot").style("opacity", 1);
 };
 let options = document.querySelectorAll(".setGroupBtn");
@@ -22,6 +25,7 @@ function unselectAll() {
       " transparent 0 0 0 3px, rgba(18, 18, 18, 0.1) 0 6px 20px";
   }
 }
+
 const calculateData = (_data, time, groupBy) => {
   const nestedData = d3
     .nest()
@@ -40,6 +44,9 @@ const calculateData = (_data, time, groupBy) => {
     .sortKeys(d3.ascending)
     .rollup(function (leaves) {
       return {
+        sum: d3.sum(leaves, (d) => {
+          return 1;
+        }),
         grouped: d3.group(leaves, (d) => {
           return d[groupBy];
         }),
@@ -56,6 +63,7 @@ const calculateData = (_data, time, groupBy) => {
     Array.from(d.value.grouped, ([key, values], index) => {
       allKeys.add(key);
       groupedData.push({
+        totalSum: d.value.sum,
         date: d.key,
         key: key,
         sum: values.length,
@@ -93,64 +101,18 @@ const calculateData = (_data, time, groupBy) => {
 d3.csv("./birdstrikes.csv").then((_data) => {
   let time = "months";
   let i;
-  const width = 700;
-  const height = 350;
+  const width = 600;
+  const height = 380;
 
-  const data = calculateData(_data, time, groupBy);
-  scatterPlot(data, width, height, groupBy);
-  bubblePlotLabels(
-    "labels",
-    width,
-    height - 50,
-    [data.minCost, data.maxCost],
-    data.allKeys
-  );
-  sizeLabels(
-    "sizeLabels",
-    [data.minCost, data.maxCost],
-    [data.minCost, data.maxCost / 2, data.maxCost]
-  );
-
-  options.forEach((option) => {
-    option.addEventListener("click", setGroupBy);
-  });
-  console.log(data.startDate, data.endDate);
-  const numberOfYears = d3.timeYear.count(data.startDate, data.endDate);
-  const timeScale = d3
-    .scaleTime()
-    .domain([data.startDate, data.endDate])
-    .range([0, numberOfYears]);
-
-  const div = document.getElementById("timeSlider");
-  var valUp = 0;
-  console.log(numberOfYears);
-  d3.select("#timeSlider")
-    .append("input")
-    .attr("type", "range")
-    .attr("min", 0)
-    .attr("max", numberOfYears);
-
-  const date = timeScale.invert();
-
-  function setGroupBy(e) {
-    unselectAll();
-    groupBy = e.srcElement.id;
-    this.style.boxShadow = "tomato 0 0 0 3px";
-    const data = calculateData(_data, time, groupBy);
-    scatterPlot(data, width, height, groupBy);
-    bubblePlotLabels(
-      "labels",
-      width,
-      height - 50,
-      [data.minCost, data.maxCost],
-      data.allKeys
-    );
-  }
-
-  //console.log(loadedData);    //Printing all data on console
+  var data = calculateData(_data, time, groupBy);
+  scatterPlot(data, width, height, groupBy, time);
+  barPlot(data, _data, width, height, time);
+  radialPlot(data, _data, "radialPlot", width, height);
   const loadedData = _data.map((d) => {
-    // console.log(d);
-    return { originState: d["Origin State"], airportName: d["Airport Name"] };
+    return {
+      originState: d["Origin State"],
+      airportName: d[groupBy],
+    };
   });
 
   let groupedData = d3.rollup(
@@ -160,6 +122,48 @@ d3.csv("./birdstrikes.csv").then((_data) => {
     (d) => d.airportName
   );
   let root = d3.hierarchy(groupedData);
-  console.log(root);
-  var svg = treeChart("treeChart", root, data.allKeys, 800, 1000);
+  var svg = treeChart("treeChart", root, data, width, height * 1.2);
+  const slider = document.getElementById("TimeMode");
+  slider.onclick = function () {
+    if (time === "years") time = "months";
+    else time = "years";
+    console.log("changed");
+    document.getElementById(groupBy).click();
+  };
+  options.forEach((option) => {
+    option.addEventListener("click", setGroupBy);
+  });
+  function setGroupBy(e) {
+    unselectAll();
+    groupBy = e.srcElement.id;
+    this.style.boxShadow = "tomato 0 0 0 3px";
+    const data = calculateData(_data, time, groupBy);
+    scatterPlot(data, width, height, groupBy, time);
+    barPlot(data, _data, width, height, time);
+    // bubblePlotLabels(
+    //   "labels",
+    //   width,
+    //   height - 50,
+    //   [data.minCost, data.maxCost],
+    //   data.allKeys
+    // );
+    const loadedData = _data.map((d) => {
+      // console.log(d);
+      return {
+        originState: d["Origin State"],
+        airportName: d[groupBy],
+      };
+    });
+
+    let groupedData = d3.rollup(
+      loadedData,
+      (v) => v.length,
+      (d) => d.originState,
+      (d) => d.airportName
+    );
+    let root = d3.hierarchy(groupedData);
+    var svg = treeChart("treeChart", root, data, width, height);
+  }
+
+  //console.log(loadedData);    //Printing all data on console
 });

@@ -113,10 +113,10 @@ body {
     margin: 10px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 500px 800px;
+    grid-template-rows: 500px 500px;
     grid-template-areas:
-      "card1 card3"
-      "card2 card4";
+      "card1 card2"
+      "card3 card4";
     grid-gap: 10px;
   }
 }
@@ -147,7 +147,11 @@ body {
   fill: tomato;
 }
 
-.setGroupBtn {
+.clicked {
+  opacity: 1;
+}
+
+.Btn {
   align-items: center;
   background-color: #fff;
   border-radius: 12px;
@@ -175,6 +179,10 @@ body {
   touch-action: manipulation;
 }
 
-.setGroupBtn:hover {
+.mode {
+  background-color: tomato;
+}
+
+.Btn:hover {
   box-shadow: tomato 0 0 0 3px, transparent 0 0 0 0;
 }

@@ -1,13 +1,12 @@
-import { colorRanges } from "./constants.js";
 import {
   bubblePlotLabels,
   camalize,
   getColorScale,
   getSizeScale,
 } from "./utils.js";
-export const scatterPlot = (data, widthProp, heightProp, groupBy) => {
+export const scatterPlot = (data, widthProp, heightProp, groupBy, time) => {
   d3.select("#barChart").selectAll("*").remove();
-  var margin = { top: 20, right: 40, bottom: 40, left: 40 },
+  var margin = { top: 40, right: 40, bottom: 40, left: 40 },
     width = widthProp - margin.left - margin.right,
     height = heightProp - margin.top - margin.bottom;
   var svg = d3
@@ -18,12 +17,20 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy) => {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   // console.log(time, groupBy);
-
+  let startDate = new Date(data.startDate);
+  let endDate = new Date(data.endDate);
+  if (time === "months") {
+    startDate.setMonth(startDate.getMonth() - 1);
+    endDate.setMonth(endDate.getMonth() + 1);
+  } else {
+    startDate.setFullYear(startDate.getFullYear() - 2);
+    endDate.setFullYear(endDate.getFullYear() + 1);
+  }
   //   X axis
   // console.log(data);
   var x = d3
     .scaleTime()
-    .domain([new Date(data.startDate), new Date(data.endDate)])
+    .domain([new Date(startDate), new Date(endDate)])
     .range([20, width]);
   const xAxis = svg
     .append("g")
@@ -130,11 +137,11 @@ export const scatterPlot = (data, widthProp, heightProp, groupBy) => {
     // This add an invisible rect on top of the chart area. This rect can recover pointer events: necessary to understand when the user zoom
     svg
       .append("rect")
-      .attr("width", width + margin.right)
-      .attr("height", height + margin.bottom)
+      .attr("width", widthProp + margin.right)
+      .attr("height", heightProp + margin.bottom)
       .style("fill", "none")
       .style("pointer-events", "all")
-      .attr("transform", "translate(" + margin.right + ",0)")
+      .attr("transform", "translate(" + margin.left + ",0)")
       .call(zoom);
     // now the user can zoom and it will trigger the function called updateChart
 

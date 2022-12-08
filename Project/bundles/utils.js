@@ -11,17 +11,13 @@ export const camalize = (str) => {
     .toLowerCase()
     .replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
 };
-export const sizeLabels = (chartId, domain, valuesToShow) => {
-  d3.select("#" + chartId)
-    .selectAll("*")
-    .remove();
-
-  var svg = d3.select("#" + chartId).append("svg");
+export const sizeLabels = (svg, domain, valuesToShow) => {
+  var svg = svg.append("svg").attr("height", 500);
   var width = 300;
-  var height = 300;
+  var height = 400;
   var xCircle = width * 0.5;
-  var xLabel = width * 0.8;
-  var yCircle = height * 0.3;
+  var xLabel = width * 0.1;
+  var yCircle = height * 0.9;
   // Add legend: circles
   var valuesToShow = valuesToShow;
   var size = getSizeScale(domain); // Size in pixel
@@ -48,7 +44,7 @@ export const sizeLabels = (chartId, domain, valuesToShow) => {
     .enter()
     .append("line")
     .attr("x1", function (d) {
-      return xCircle + size(d);
+      return xCircle - size(d);
     })
     .attr("x2", xLabel)
     .attr("y1", function (d) {
@@ -71,10 +67,10 @@ export const sizeLabels = (chartId, domain, valuesToShow) => {
       return yCircle - size(d);
     })
     .text(function (d) {
-      return d + " $";
+      return d + " Strikes";
     })
     .style("font-size", 10)
-    .attr("alignment-baseline", "middle");
+    .attr("alignment-baseline", "left");
 
   svg
     .selectAll("legend")
@@ -83,12 +79,12 @@ export const sizeLabels = (chartId, domain, valuesToShow) => {
     .append("text")
     .attr("x", xCircle - 90)
     .attr("y", yCircle + 20)
-    .text("Total strike costs = others + repair ")
+    .text("Total strike Frequencies ")
     .style("font-size", 10)
     .attr("alignment-baseline", "middle");
 };
 export const bubblePlotLabels = (
-  chartId,
+  svg,
   widthProp,
   heightProp,
   domain,
@@ -96,13 +92,7 @@ export const bubblePlotLabels = (
 ) => {
   var height = heightProp - 100;
   var width = 220;
-  d3.select("#" + chartId)
-    .selectAll("*")
-    .remove();
-  var svg = d3
-    .select("#" + chartId)
-    .append("svg")
-    .attr("height", 600);
+  var svg = svg.append("svg").attr("height", 280);
   // The scale you use for bubble size
   var size = getSizeScale(domain); // Size in pixel
   //   console.log(size(valuesToShow[2]));

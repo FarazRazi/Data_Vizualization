@@ -6,41 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
     <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <title>Document</title>
   </head>
   <body>
     <main class="main">
+      <div class="header">
+        Select a grouping filter:<br /><br />
+        <button class="setGroupBtn Btn" id="Time of day">Time of day</button>
+        <button class="setGroupBtn Btn" id="Wildlife Species">Species</button>
+        <button class="setGroupBtn Btn" id="Origin State">Origin State</button>
+        <button class="setGroupBtn Btn" id="Phase of flight">
+          Phase of Flight
+        </button>
+        <button class="setGroupBtn Btn" id="Aircraft Airline Operator">
+          Airlines Operator
+        </button>
+        <button class="Btn mode" id="TimeMode">
+          Change Time Mode Months/Years
+        </button>
+      </div>
       <div class="main_cards">
         <div class="card">
-          Strikes Frequency
-          <div>
-            Select a grouping filter:<br /><br />
-            <button class="setGroupBtn" id="Time of day">Time of day</button>
-            <button class="setGroupBtn" id="Wildlife Species">Species</button>
-            <button class="setGroupBtn" id="Origin State">Origin State</button>
-            <button class="setGroupBtn" id="Phase of flight">
-              Phase of Flight
-            </button>
-            <button class="setGroupBtn" id="Aircraft Airline Operator">
-              Airlines Operator
-            </button>
-          </div>
+          Time Line
           <div id="barChart"></div>
         </div>
         <div class="card">
-          Hierarchy Visualization
+          Graph
           <div id="treeChart"></div>
         </div>
         <div class="card">
-          Size Chart
-          <div id="sizeLabels"></div>
-          Filtered Groups
-          <div id="labels"></div>
+          Over Time period
+          <div id="timeLine"></div>
         </div>
         <div class="card">
-          Over Time period
-          <div id="timeSlider"></div>
+          Hierarchy Visualization
+          <div id="radialPlot"></div>
         </div>
       </div>
       <div class="main_cards"></div>
